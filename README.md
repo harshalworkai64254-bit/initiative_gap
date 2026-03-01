@@ -21,7 +21,7 @@ This repository presents:
 2. **The MAIL Framework** (Meta-cognitive Autonomous Inquiry Loop) — a complete architectural specification for a system that closes the gap
 3. **The Knowledge Frontier Problem** — what should an AI do when it reaches the edge of human knowledge and receives the answer "I don't know"?
 4. **The Competitive Knowledge Arena (CKA)** — a multi-agent extension where AI agents compete under zero-sum epistemic rewards, accelerating discovery through competition
-5. **A working prototype** — code implementing the curiosity-driven learning loop on a small model
+5. **A verified implementation** — full MAIL pipeline running on real models (all-MiniLM-L6-v2 + Llama 3.2), with experimental results from Session 1
 6. **A proposed experimental programme** for testing these ideas at frontier scale
 
 ---
@@ -98,39 +98,60 @@ Total reward across all agents sums to zero at every timestep.
 
 ```
 initiative-gap/
-├── README.md                    ← you are here
+├── README.md                ← you are here
 ├── initiative_gap.docx      ← full research paper (15 sections)
-├── curious_ai.py             ← working prototype (Python, runs on Google Colab)
-└── LICENCE.txt                  ← CC BY 4.0
+├── curious_ai.py            ← live MAIL pipeline (real models, runs on Google Colab)
+├── results/
+│   └── session_1.txt        ← first experimental results (5 cycles, March 2026)
+└── LICENCE.txt              ← CC BY 4.0
 ```
 
 ---
 
 ## The Implementation
 
-`curious_ai.py` is an unvalidated implementation of the MAIL loop architecture, designed for testing at scale. It has not yet been run on hardware capable of producing meaningful results — that is precisely what the collaboration request in Section 15 of the paper is seeking.
+`curious_ai.py` is a fully working implementation of the MAIL loop, verified on real models. All five stages run on Google Colab free tier.
 
-The code implements:
+**Models used:**
+- `all-MiniLM-L6-v2` (sentence-transformers) — real 384-dimensional embedding space
+- `Llama 3.2` via Ollama — natural language question generation from hypothesis vectors
+- `PyBullet` — physics simulation for post-frontier empirical validation
 
-- A small transformer architecture trained only on English language structure (no world knowledge)
-- Phase 1: Reinforcement learning loop where the model is rewarded for generating yes/no questions with no input given
-- Phase 2: Interactive binary feedback loop — you answer its questions with yes/no only
-- Physics environment via PyBullet for post-frontier empirical testing
+**What has been verified in Session 1 (March 2026):**
+- Stage 1: k-NN gap detection on real embedding vectors ✓
+- Stage 2: Weighted interpolation hypothesis generation ✓
+- Stage 3: Llama generates real natural language questions from hypothesis vectors ✓
+- Stage 4: Knowledge Frontier detected, simulation triggered on philosophical questions ✓
+- Stage 5: Confirmed knowledge integrated, knowledge base grew 35 → 38 concepts ✓
+- Visited gap tracking: MAIL correctly moved to a new gap each cycle ✓
 
-**The architecture is designed for, but not yet validated on, frontier-scale models and GPU clusters.** The small model here demonstrates the loop structure only. Meaningful results — gap detection, hypothesis vector confirmation, EKC integration, and the Competitive Knowledge Arena — require the infrastructure described in Section 15 of the paper.
+**One placeholder remaining:** EKC weight updates require direct write access to model weights. Currently confirmed knowledge is integrated as text concepts that rebuild the embedding space. Full EKC gradient updates require frontier model access — see Section 15 of the paper.
 
-**To run the small-scale implementation on Google Colab:**
+**To run on Google Colab:**
 ```python
-!pip install torch pybullet numpy
-# Upload curious_ai.py then run:
+# Cell 1 — install dependencies
+!pip install sentence-transformers scikit-learn requests pybullet -q
+!sudo apt-get install -y zstd
+!curl -fsSL https://ollama.com/install.sh | sh
+
+# Cell 2 — start Ollama and pull model
+import subprocess, threading, time
+threading.Thread(target=lambda: subprocess.Popen(['ollama', 'serve'],
+    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)).start()
+time.sleep(5)
+!ollama pull llama3.2
+
+# Cell 3 — run
 exec(open('curious_ai.py').read())
 ```
+
+Select option 4 first to see what gaps MAIL detects in the knowledge base. Then option 1 to run the full loop.
 
 ---
 
 ## Collaboration Request
 
-I am 14 (At the time of making this repo at 27/02/2026). I do not have access to a GPU cluster or a frontier model's weight architecture.
+I am 14. I do not have access to a GPU cluster or a frontier model's weight architecture.
 
 The theoretical framework is complete. The mathematics is sound. The experimental designs are specified in Section 15 of the paper. What is missing is compute and access.
 
@@ -145,10 +166,7 @@ In exchange: full collaboration on experimental design and analysis, and co-auth
 
 If the framework is correct, these experiments will demonstrate for the first time that a frontier AI system can acquire genuinely new knowledge through autonomous inquiry — knowledge not present at training time and not provided by human labels. If it is wrong, the experiments will show exactly where and why, which is equally valuable.
 
-**Contact:** 
-Name: Harshal Adari
-Email: harshal.work.ai64254@gmail.com
-Phone: +447909030782
+**Contact:** [add your contact details here]
 
 ---
 
@@ -160,7 +178,7 @@ If you use these ideas, please cite this repository:
 @misc{initiative_gap_2026,
   title  = {The Initiative Gap: A Framework for Autonomous Discovery and Empirical Alignment},
   year   = {2026},
-  url    = {https://github.com/harshalworkai64254-bit/initiative-gap}
+  url    = {https://github.com/[your-username]/initiative-gap}
 }
 ```
 
