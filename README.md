@@ -153,7 +153,7 @@ Select option 4 first to see what gaps MAIL detects in the knowledge base. Then 
 
 I am 14. I do not have access to a GPU cluster or a frontier model's weight architecture.
 
-The theoretical framework is complete. The mathematics is sound. The experimental designs are specified in Section 15 of the paper. What is missing is compute and access.
+The theoretical framework is complete. The mathematics is sound. The experimental designs are specified in Section 15 of the paper. What is missing is high-level compute and access.
 
 I am seeking collaboration with any frontier AI laboratory — **Anthropic, Google DeepMind, OpenAI, Meta AI** — willing to provide:
 
@@ -166,7 +166,10 @@ In exchange: full collaboration on experimental design and analysis, and co-auth
 
 If the framework is correct, these experiments will demonstrate for the first time that a frontier AI system can acquire genuinely new knowledge through autonomous inquiry — knowledge not present at training time and not provided by human labels. If it is wrong, the experiments will show exactly where and why, which is equally valuable.
 
-**Contact:** [add your contact details here]
+**Contact:**
+Name: Harshal Adari
+Email: harshal.work.ai64254@gmail.com
+Phone Number: +447909030782
 
 ---
 
@@ -178,7 +181,7 @@ If you use these ideas, please cite this repository:
 @misc{initiative_gap_2026,
   title  = {The Initiative Gap: A Framework for Autonomous Discovery and Empirical Alignment},
   year   = {2026},
-  url    = {https://github.com/[your-username]/initiative-gap}
+  url    = {https://github.com/harshalworkai64254-bit/initiative-gap}
 }
 ```
 
