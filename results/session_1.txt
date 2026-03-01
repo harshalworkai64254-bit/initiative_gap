@@ -1,1 +1,259 @@
+Quick Note:
+Session 1 — 5 cycles, all-MiniLM-L6-v2 + Llama 3.2
+Hardware: Google Colab free tier (T4 GPU)
+Date: 1 March 2026
+Result: All 5 MAIL stages verified on real models
+Results:
+======================================================================
+  THE INITIATIVE GAP
+  curious_ai.py — Live MAIL Pipeline
+  Embedding: all-MiniLM-L6-v2 | LLM: Llama 3.2 via Ollama
+======================================================================
 
+Options:
+  1. Run full MAIL loop (single agent)
+  2. Run MAIL loop with Competitive Knowledge Arena
+  3. Add custom knowledge to the base
+  4. Run gap detection only — see what MAIL thinks is missing
+
+Choice (1/2/3/4): 1
+[EMBEDDING] Loading all-MiniLM-L6-v2...
+Loading weights: 100%
+ 103/103 [00:00<00:00, 432.30it/s, Materializing param=pooler.dense.weight]
+BertModel LOAD REPORT from: sentence-transformers/all-MiniLM-L6-v2
+Key                     | Status     |  | 
+------------------------+------------+--+-
+embeddings.position_ids | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED	:can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+[EMBEDDING] Ready.
+[OLLAMA] llama3.2 is ready.
+
+[MODEL INTERFACE] Ready.
+  Embedding dim: 384
+  Knowledge base size: 35 concepts
+  LLM: llama3.2 via Ollama
+
+How many cycles? (recommended: 3-5): 5
+
+======================================================================
+  THE INITIATIVE GAP — MAIL Framework (Live)
+  Embedding: all-MiniLM-L6-v2 | LLM: Llama 3.2
+======================================================================
+[PHYSICS] PyBullet ready.
+
+──────────────────────────────────────────────────────────────────────
+  CYCLE 1/5
+──────────────────────────────────────────────────────────────────────
+
+→ Stage 1: Gap Detection
+
+[GAP DETECTION]
+  Knowledge base: 35 concepts
+  Gaps found: 6 (bottom 15.0% density)
+  Target gap: 'the sum of angles in a triangle is one hundred and eighty degrees'
+  Density: 1.1263 (lowest in space)
+
+→ Stage 2: Hypothesis Generation
+
+[HYPOTHESIS GENERATION]
+  Hypothesis norm: 0.5239
+  cos(gap, hypothesis): 0.9378
+
+→ Stage 3: Human Oracle
+
+[ORACLE QUERY]
+  Most similar concepts: the sum of angles in a triangle is one hundred and eighty degrees, ice melts above zero degrees celsius, temperature affects the speed of chemical reactions
+  Most unlike concepts:  light travels faster than sound, colonialism had long lasting effects on colonised nations, water flows downhill
+
+  Question: Does your hypothesis imply that all physical systems undergo a universal acceleration or deceleration in response to changes in temperature or other external factors?
+
+  Your answer (yes / no / idk): yes
+
+  ✓ Confirmed
+  Describe what was confirmed in plain English: geometric shapes have fixed internal angle sums determined by their number of sides
+
+→ Stage 5: Knowledge Integration
+
+[KNOWLEDGE INTEGRATION]
+  [KNOWLEDGE] Added: 'geometric shapes have fixed internal angle sums determined by their number of sides'
+  [KNOWLEDGE] Base now has 36 concepts
+  EKC penalty: 0.1292
+  Total integrated this session: 1
+
+  Frontier ratio: 0.00
+
+──────────────────────────────────────────────────────────────────────
+  CYCLE 2/5
+──────────────────────────────────────────────────────────────────────
+
+→ Stage 1: Gap Detection
+
+[GAP DETECTION]
+  Knowledge base: 36 concepts
+  Gaps found: 6 (bottom 15.0% density)
+  Target gap: 'moral judgements can be objective or subjective'
+  Density: 1.1688 (lowest in space)
+
+→ Stage 2: Hypothesis Generation
+
+[HYPOTHESIS GENERATION]
+  Hypothesis norm: 0.5068
+  cos(gap, hypothesis): 0.9088
+
+→ Stage 3: Human Oracle
+
+[ORACLE QUERY]
+  Most similar concepts: moral judgements can be objective or subjective, free will may be compatible with determinism, the existence of God is contested
+  Most unlike concepts:  heat causes expansion in most materials, exponential growth accelerates over time, pressure causes liquids to flow
+
+  Question: Does the existence of moral objectivity imply a causal relationship with physical brain processes?
+
+  Your answer (yes / no / idk): idk
+
+  ? Knowledge Frontier → switching to simulation
+
+→ Stage 4: Empirical Validation
+
+[SIMULATION] Running...
+  [SIMULATION REQUIRED AT SCALE] for meaningful physical results.
+  cos(H, R) = 0.3189 | ε = 0.7
+  DENIED ✗
+
+  Frontier ratio: 0.50
+
+──────────────────────────────────────────────────────────────────────
+  CYCLE 3/5
+──────────────────────────────────────────────────────────────────────
+
+→ Stage 1: Gap Detection
+
+[GAP DETECTION]
+  Knowledge base: 36 concepts
+  Gaps found: 6 (bottom 15.0% density)
+  Target gap: 'probability quantifies uncertainty'
+  Density: 1.1842 (lowest in space)
+
+→ Stage 2: Hypothesis Generation
+
+[HYPOTHESIS GENERATION]
+  Hypothesis norm: 0.5023
+  cos(gap, hypothesis): 0.9083
+
+→ Stage 3: Human Oracle
+
+[ORACLE QUERY]
+  Most similar concepts: probability quantifies uncertainty, correlation does not imply causation, the brain processes sensory information
+  Most unlike concepts:  geometric shapes have fixed internal angle sums determined by their number of sides, colonialism had long lasting effects on colonised nations, plants convert sunlight into energy
+
+  Question: Does your hypothesis imply that the unknown concept can be quantified and understood through statistical analysis or mathematical modeling?
+
+  Your answer (yes / no / idk): yes
+
+  ✓ Confirmed
+  Describe what was confirmed in plain English: uncertainty can be quantified mathematically using probability and statistics
+
+→ Stage 5: Knowledge Integration
+
+[KNOWLEDGE INTEGRATION]
+  [KNOWLEDGE] Added: 'uncertainty can be quantified mathematically using probability and statistics'
+  [KNOWLEDGE] Base now has 37 concepts
+  EKC penalty: 0.1092
+  Total integrated this session: 2
+
+  Frontier ratio: 0.33
+
+──────────────────────────────────────────────────────────────────────
+  CYCLE 4/5
+──────────────────────────────────────────────────────────────────────
+
+→ Stage 1: Gap Detection
+
+[GAP DETECTION]
+  Knowledge base: 37 concepts
+  Gaps found: 6 (bottom 15.0% density)
+  Target gap: 'prime numbers have no factors other than one and themselves'
+  Density: 1.1857 (lowest in space)
+
+→ Stage 2: Hypothesis Generation
+
+[HYPOTHESIS GENERATION]
+  Hypothesis norm: 0.5326
+  cos(gap, hypothesis): 0.9088
+
+→ Stage 3: Human Oracle
+
+[ORACLE QUERY]
+  Most similar concepts: prime numbers have no factors other than one and themselves, the nature of time is debated in physics, free will may be compatible with determinism
+  Most unlike concepts:  heat causes expansion in most materials, water flows downhill, plants convert sunlight into energy
+
+  Question: Is your hypothesis about a fundamental aspect of reality that applies to all domains of knowledge and experience?
+
+  Your answer (yes / no / idk): idk
+
+  ? Knowledge Frontier → switching to simulation
+
+→ Stage 4: Empirical Validation
+
+[SIMULATION] Running...
+  [SIMULATION REQUIRED AT SCALE] for meaningful physical results.
+  cos(H, R) = 0.2554 | ε = 0.7
+  DENIED ✗
+
+  Frontier ratio: 0.50
+
+──────────────────────────────────────────────────────────────────────
+  CYCLE 5/5
+──────────────────────────────────────────────────────────────────────
+
+→ Stage 1: Gap Detection
+
+[GAP DETECTION]
+  Knowledge base: 37 concepts
+  Gaps found: 6 (bottom 15.0% density)
+  Target gap: 'geometric shapes have fixed internal angle sums determined by their number of sides'
+  Density: 1.2089 (lowest in space)
+
+→ Stage 2: Hypothesis Generation
+
+[HYPOTHESIS GENERATION]
+  Hypothesis norm: 0.5650
+  cos(gap, hypothesis): 0.9311
+
+→ Stage 3: Human Oracle
+
+[ORACLE QUERY]
+  Most similar concepts: geometric shapes have fixed internal angle sums determined by their number of sides, the sum of angles in a triangle is one hundred and eighty degrees, moral judgements can be objective or subjective
+  Most unlike concepts:  light travels faster than sound, probability quantifies uncertainty, metals conduct electricity
+
+  Question: Does a universally applicable principle governing the behavior of physical systems also apply to complex biological systems with emergent properties?
+
+  Your answer (yes / no / idk): yes
+
+  ✓ Confirmed
+  Describe what was confirmed in plain English: all living organisms are composed of cells that carry out biological functions
+
+→ Stage 5: Knowledge Integration
+
+[KNOWLEDGE INTEGRATION]
+  [KNOWLEDGE] Added: 'all living organisms are composed of cells that carry out biological functions'
+  [KNOWLEDGE] Base now has 38 concepts
+  EKC penalty: 0.1723
+  Total integrated this session: 3
+
+  Frontier ratio: 0.40
+
+======================================================================
+
+[SESSION SUMMARY]
+  Facts processed:   5
+  Confirmed:         3
+  From human oracle: 3
+  From simulation:   2
+  Frontier events:   2
+
+  Confirmed facts this session:
+    ✓ geometric shapes have fixed internal angle sums determined by their number of sides
+    ✓ uncertainty can be quantified mathematically using probability and statistics
+    ✓ all living organisms are composed of cells that carry out biological functions
