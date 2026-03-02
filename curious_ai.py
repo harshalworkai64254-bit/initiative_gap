@@ -260,27 +260,40 @@ class RealModelInterface:
         Uses Llama 3.2 to generate a natural language yes/no question
         from the top-10 and bottom-10 concept labels.
         """
+        pos_str = ', '.join(top_positive[:5])
+        neg_str = ', '.join(top_negative[:5])
+
         system = (
-            "You are a curious AI that asks yes/no questions to learn about the world. "
-            "Given concepts a hypothesis is similar to and unlike, "
-            "generate ONE clear yes/no question that tests whether this hypothesis is correct. "
-            "Output only the question, nothing else."
+            "You are a curious AI exploring the frontiers of human knowledge. "
+            "You will be given concepts that a hidden hypothesis is similar to, "
+            "and concepts it is unlike. "
+            "Your job is to generate ONE specific, concrete yes/no question "
+            "that probes what the hidden concept might be. "
+            "Do NOT use the word 'hypothesis' or placeholder text like [hypothesis] in your question. "
+            "Ask about a real, specific relationship between the given concepts. "
+            "Output only the question itself, nothing else."
         )
 
         prompt = (
-            f"I have a hypothesis about something unknown.\n"
-            f"It seems strongly related to: {', '.join(top_positive[:5])}\n"
-            f"It seems strongly unlike: {', '.join(top_negative[:5])}\n"
-            f"What yes/no question would best test if this hypothesis is correct?"
+            f"A hidden concept is strongly related to: {pos_str}\n"
+            f"The same concept is strongly unlike: {neg_str}\n"
+            f"Ask one specific yes/no question that would help identify what this concept is. "
+            f"Be concrete. Do not use the word hypothesis or any placeholder text."
         )
 
-        question = self.ollama.generate(prompt, system=system, max_tokens=100)
+        question = self.ollama.generate(prompt, system=system, max_tokens=80)
 
-        # Fallback if Ollama unavailable
-        if "[OLLAMA" in question:
-            pos_str = ", ".join(top_positive[:3])
-            neg_str = ", ".join(top_negative[:3])
-            question = f"Is this concept related to {pos_str} and unlike {neg_str}?"
+        # Reject if Llama left placeholder text in or failed
+        bad_phrases = ["[hypothesis]", "[OLLAMA", "placeholder", "unknown concept"]
+        if any(p in question for p in bad_phrases) or not question.strip():
+            question = (
+                f"Is this concept related to {', '.join(top_positive[:2])} "
+                f"but distinct from {', '.join(top_negative[:2])}?"
+            )
+
+        # Ensure it ends with a question mark
+        if not question.strip().endswith("?"):
+            question = question.strip() + "?"
 
         return question
 
@@ -326,47 +339,227 @@ class RealModelInterface:
 
 
 # ==============================================================================
-# SECTION 5 — GAP DETECTOR (unchanged — maths is real)
+# SECTION 5 — GAP DETECTOR
+# Real implementation: inter-cluster probing into genuinely uncharted space.
+#
+# The old approach found the most isolated vectors WITHIN the knowledge base.
+# That is finding gaps between known things — not finding unknown territory.
+#
+# The correct approach:
+#   1. Find dense clusters in the knowledge base (fields of knowledge)
+#   2. Find midpoints BETWEEN clusters (interdisciplinary frontiers)
+#   3. Probe outward from those midpoints into empty space
+#   4. Generate hypothesis vectors at the frontier
+#
+# Human knowledge is a tiny cluster in an infinite space.
+# Everything outside the cluster is unknown.
+# The most valuable gaps are at the BOUNDARIES between existing clusters —
+# exactly where real interdisciplinary breakthroughs happen.
 # ==============================================================================
 
 class GapDetector:
     """
-    Stage 1: k-NN density estimation over real embedding space.
-    ρ(x) = 1 / d_k(x)
-    Low density = knowledge gap = target for inquiry.
+    Stage 1: Inter-cluster frontier detection.
+
+    Finds genuine gaps in knowledge space by:
+    1. Clustering known vectors into fields of knowledge
+    2. Finding midpoints between cluster pairs (interdisciplinary gaps)
+    3. Probing outward from midpoints into uncharted space
+    4. Ranking gaps by how far they are from ALL known knowledge
+
+    This finds territory humanity has never explored —
+    not just which known concepts are most isolated.
     """
 
-    def __init__(self, k: int = 5, gap_percentile: float = 15.0):
-        self.k = k
-        self.gap_percentile = gap_percentile
+    def __init__(self, n_clusters: int = 5, n_probes: int = 20,
+                 probe_steps: int = 10, k: int = 5):
+        self.n_clusters  = n_clusters   # number of knowledge clusters
+        self.n_probes    = n_probes     # random directions to probe per gap
+        self.probe_steps = probe_steps  # steps outward along each probe
+        self.k           = k            # neighbours for density check
 
-    def compute_density(self, vectors: np.ndarray) -> np.ndarray:
-        n = len(vectors)
-        k = min(self.k, n - 1)
+    def cosine_sim(self, a: np.ndarray, b: np.ndarray) -> float:
+        na, nb = np.linalg.norm(a), np.linalg.norm(b)
+        if na == 0 or nb == 0:
+            return 0.0
+        return float(np.dot(a, b) / (na * nb))
 
-        if SKLEARN_AVAILABLE:
-            nn = NearestNeighbors(n_neighbors=k + 1, metric='cosine', algorithm='brute')
-            nn.fit(vectors)
-            distances, _ = nn.kneighbors(vectors)
-            avg_distances = distances[:, 1:].mean(axis=1)
-        else:
-            norms = np.linalg.norm(vectors, axis=1, keepdims=True)
-            norms = np.where(norms == 0, 1e-8, norms)
-            normalised = vectors / norms
-            sim = normalised @ normalised.T
-            dist_matrix = 1.0 - sim
-            avg_distances = np.zeros(n)
-            for i in range(n):
-                row = dist_matrix[i].copy()
-                row[i] = np.inf
-                avg_distances[i] = np.sort(row)[:k].mean()
+    def compute_density_at(self, point: np.ndarray,
+                            vectors: np.ndarray) -> float:
+        """Density of the embedding space at an arbitrary point."""
+        k = min(self.k, len(vectors))
+        norms = np.linalg.norm(vectors, axis=1)
+        norms = np.where(norms == 0, 1e-8, norms)
+        point_norm = np.linalg.norm(point)
+        if point_norm == 0:
+            return 0.0
+        # Cosine similarity from point to all known vectors
+        sims = (vectors @ point) / (norms * point_norm + 1e-8)
+        distances = 1.0 - sims
+        nearest_k = np.sort(distances)[:k]
+        avg_dist = nearest_k.mean()
+        return 1.0 / (avg_dist + 1e-8)
 
-        return 1.0 / (avg_distances + 1e-8)
+    def find_clusters(self, vectors: np.ndarray) -> tuple:
+        """
+        Group knowledge vectors into clusters using k-means.
+        Each cluster represents a field of knowledge.
+        Returns (cluster_centres, cluster_labels)
+        """
+        if not SKLEARN_AVAILABLE:
+            # Fallback: treat each vector as its own cluster
+            return vectors.copy(), np.arange(len(vectors))
+
+        from sklearn.cluster import KMeans
+        n = min(self.n_clusters, len(vectors))
+        km = KMeans(n_clusters=n, random_state=42, n_init=10)
+        labels = km.fit_predict(vectors)
+        centres = km.cluster_centers_
+
+        # Normalise centres to unit sphere
+        norms = np.linalg.norm(centres, axis=1, keepdims=True)
+        norms = np.where(norms == 0, 1e-8, norms)
+        centres = centres / norms
+
+        return centres, labels
+
+    def find_interdisciplinary_midpoints(self,
+                                          centres: np.ndarray) -> list:
+        """
+        Find midpoints between every pair of cluster centres.
+        These are the interdisciplinary frontiers —
+        the spaces between fields of knowledge.
+        e.g. midpoint between physics cluster and biology cluster
+             = potential biophysics frontier
+        """
+        midpoints = []
+        n = len(centres)
+        for i in range(n):
+            for j in range(i + 1, n):
+                mid = (centres[i] + centres[j]) / 2.0
+                # Normalise to unit sphere
+                norm = np.linalg.norm(mid)
+                if norm > 0:
+                    mid = mid / norm
+                # Distance between the two clusters (how big is the gap?)
+                gap_size = 1.0 - self.cosine_sim(centres[i], centres[j])
+                midpoints.append({
+                    'vector':    mid,
+                    'cluster_a': i,
+                    'cluster_b': j,
+                    'gap_size':  gap_size
+                })
+
+        # Sort by gap size — biggest gaps first
+        midpoints.sort(key=lambda x: x['gap_size'], reverse=True)
+        return midpoints
+
+    def probe_frontier(self, midpoint: np.ndarray,
+                       vectors: np.ndarray) -> np.ndarray:
+        """
+        Starting from a midpoint between two clusters,
+        probe outward into empty space to find the frontier.
+
+        Walk in the direction of the midpoint (away from centroid)
+        until density drops below threshold.
+        The last point before density drops to near zero is the frontier.
+        """
+        centroid = vectors.mean(axis=0)
+        centroid_norm = np.linalg.norm(centroid)
+        if centroid_norm > 0:
+            centroid = centroid / centroid_norm
+
+        # Direction: from centroid toward and beyond the midpoint
+        direction = midpoint - centroid
+        dir_norm = np.linalg.norm(direction)
+        if dir_norm > 0:
+            direction = direction / dir_norm
+
+        # Walk outward in steps
+        best_frontier = midpoint.copy()
+        lowest_density = self.compute_density_at(midpoint, vectors)
+
+        for step in range(1, self.probe_steps + 1):
+            # Each step moves further from the centroid
+            probe_point = midpoint + direction * (step * 0.1)
+            norm = np.linalg.norm(probe_point)
+            if norm > 0:
+                probe_point = probe_point / norm
+
+            density = self.compute_density_at(probe_point, vectors)
+
+            if density < lowest_density:
+                lowest_density = density
+                best_frontier = probe_point.copy()
+
+        return best_frontier, lowest_density
 
     def find_gaps(self, vectors: np.ndarray) -> tuple:
-        density = self.compute_density(vectors)
-        threshold = np.percentile(density, self.gap_percentile)
-        gap_indices = np.where(density <= threshold)[0]
+        """
+        Main gap detection method.
+
+        Returns:
+            gap_vectors  — frontier vectors in uncharted space
+            gap_metadata — info about each gap (which clusters, gap size)
+            density      — density at each gap point (lower = more unknown)
+        """
+        print(f"\n[GAP DETECTION — INTER-CLUSTER FRONTIER PROBING]")
+        print(f"  Knowledge base: {len(vectors)} concepts")
+
+        # Step 1: Find knowledge clusters
+        centres, labels = self.find_clusters(vectors)
+        n_clusters = len(centres)
+        print(f"  Knowledge clusters found: {n_clusters}")
+
+        # Label clusters by their most central concept
+        cluster_labels = []
+        for c_idx in range(n_clusters):
+            members = np.where(labels == c_idx)[0]
+            if len(members) == 0:
+                cluster_labels.append(f"cluster_{c_idx}")
+                continue
+            # Find member closest to cluster centre
+            sims = np.array([
+                self.cosine_sim(vectors[m], centres[c_idx])
+                for m in members
+            ])
+            best = members[np.argmax(sims)]
+            cluster_labels.append(f"cluster_{c_idx}")
+
+        # Step 2: Find interdisciplinary midpoints
+        midpoints = self.find_interdisciplinary_midpoints(centres)
+        print(f"  Interdisciplinary frontiers: {len(midpoints)}")
+
+        # Step 3: Probe outward from each midpoint
+        gap_vectors  = []
+        gap_metadata = []
+        densities    = []
+
+        for mp in midpoints:
+            frontier, density = self.probe_frontier(mp['vector'], vectors)
+            gap_vectors.append(frontier)
+            gap_metadata.append({
+                'cluster_a': mp['cluster_a'],
+                'cluster_b': mp['cluster_b'],
+                'gap_size':  mp['gap_size'],
+                'density':   density
+            })
+            densities.append(density)
+
+        gap_vectors = np.array(gap_vectors)
+        densities   = np.array(densities)
+
+        # Sort by lowest density — most unknown territory first
+        sorted_idx = np.argsort(densities)
+        gap_vectors  = gap_vectors[sorted_idx]
+        gap_metadata = [gap_metadata[i] for i in sorted_idx]
+        densities    = densities[sorted_idx]
+
+        print(f"  Frontier gaps identified: {len(gap_vectors)}")
+        print(f"  Most unknown region density: {densities[0]:.4f}")
+        print(f"  (Lower density = further from all known knowledge)")
+
+        return gap_vectors, gap_metadata, densities
 
         print(f"\n[GAP DETECTION]")
         print(f"  Knowledge base: {len(vectors)} concepts")
@@ -707,7 +900,7 @@ def run_mail_loop(
     print("  Embedding: all-MiniLM-L6-v2 | LLM: Llama 3.2")
     print("="*70)
 
-    gap_detector  = GapDetector(k=5, gap_percentile=15.0)
+    gap_detector  = GapDetector(n_clusters=5, n_probes=20, probe_steps=10, k=5)
     hyp_generator = HypothesisGenerator(n_neighbours=10)
     sfe           = SparseFeatureExplainer(k=10)
     physics       = PhysicsOracle(epsilon=0.7)
@@ -726,29 +919,40 @@ def run_mail_loop(
         print(f"\n→ Stage 1: Gap Detection")
         vectors = model_interface.get_embedding_space()
         labels  = model_interface.get_concept_labels()
-        gap_indices, density = gap_detector.find_gaps(vectors)
 
-        if len(gap_indices) == 0:
-            print("  No gaps found — knowledge base fully covered.")
+        gap_vectors, gap_metadata, gap_densities = gap_detector.find_gaps(vectors)
+
+        if len(gap_vectors) == 0:
+            print("  No gaps found.")
             break
 
-        # Target: lowest density gap not already visited
-        # Sort gap indices by density (lowest first)
-        sorted_gap_indices = gap_indices[np.argsort(density[gap_indices])]
-        # Skip gaps we've already explored without confirmation
-        unvisited = [idx for idx in sorted_gap_indices if labels[idx] not in visited_gaps]
+        # Skip visited gaps
+        unvisited = [
+            i for i, meta in enumerate(gap_metadata)
+            if f"gap_{meta['cluster_a']}_{meta['cluster_b']}" not in visited_gaps
+        ]
         if len(unvisited) == 0:
-            # All gaps visited — reset and start again with new knowledge
-            print("  All gaps explored. Resetting visited set.")
+            print("  All frontiers explored. Resetting.")
             visited_gaps.clear()
-            unvisited = list(sorted_gap_indices)
-        target_idx     = unvisited[0]
-        gap_vector     = vectors[target_idx]
-        gap_concept    = labels[target_idx]
-        density_before = density[target_idx]
+            unvisited = list(range(len(gap_vectors)))
 
-        print(f"  Target gap: '{gap_concept}'")
-        print(f"  Density: {density_before:.4f} (lowest in space)")
+        target_gap_idx = unvisited[0]
+        gap_vector     = gap_vectors[target_gap_idx]
+        gap_meta       = gap_metadata[target_gap_idx]
+        density_before = gap_densities[target_gap_idx]
+        gap_concept    = f"frontier between cluster {gap_meta['cluster_a']} and cluster {gap_meta['cluster_b']}"
+
+        # Find the nearest known concepts to describe this frontier
+        sims = np.array([
+            gap_detector.cosine_sim(gap_vector, v) for v in vectors
+        ])
+        top3 = np.argsort(sims)[-3:][::-1]
+        nearest_concepts = [labels[i] for i in top3]
+
+        print(f"  Target: {gap_concept}")
+        print(f"  Gap size: {gap_meta['gap_size']:.4f} | Frontier density: {density_before:.4f}")
+        print(f"  Nearest known concepts: {', '.join(nearest_concepts)}")
+        print(f"  → This is uncharted territory between these fields")
 
         # ── Stage 2: Hypothesis Generation ────────────────────────────────
         print(f"\n→ Stage 2: Hypothesis Generation")
@@ -768,14 +972,16 @@ def run_mail_loop(
         if oracle_response is True:
             print(f"\n  ✓ Confirmed")
             confirmed = True
-            concept_text = input("  Describe what was confirmed in plain English: ").strip()
+            print(f"  Nearest known concepts were: {', '.join(nearest_concepts)}")
+            concept_text = input("  Name this new concept in one short sentence (max 150 chars): ").strip()
             tracker.add_fact('human', True, concept_text)
 
         elif oracle_response is False:
             print(f"\n  ✗ Denied")
             tracker.add_fact('human', False, gap_concept)
-            visited_gaps.add(gap_concept)  # mark as visited — move to next gap
-            print(f"  Gap '{gap_concept[:40]}...' marked as explored.")
+            gap_key = f"gap_{gap_meta['cluster_a']}_{gap_meta['cluster_b']}"
+            visited_gaps.add(gap_key)
+            print(f"  Frontier {gap_key} marked as explored.")
 
         else:
             # Knowledge Frontier → simulation
@@ -788,7 +994,8 @@ def run_mail_loop(
             tracker.add_fact('simulation', confirmed, gap_concept)
             gp.record_residual(hypothesis, result)
             if not confirmed:
-                visited_gaps.add(gap_concept)  # simulation denied — move to next gap
+                gap_key = f"gap_{gap_meta['cluster_a']}_{gap_meta['cluster_b']}"
+                visited_gaps.add(gap_key)
 
             if gp.check_discrepancy_frontier():
                 tracker.discrepancy_frontiers.append({
@@ -867,17 +1074,29 @@ if __name__ == "__main__":
             run_mail_loop(model, n_cycles=3)
 
     elif choice == '4':
-        print("\n[GAP DETECTION DEMO]")
+        print("\n[GAP DETECTION DEMO — INTER-CLUSTER FRONTIER PROBING]")
         vectors = model.get_embedding_space()
         labels  = model.get_concept_labels()
-        detector = GapDetector(k=5, gap_percentile=20.0)
-        gap_indices, density = detector.find_gaps(vectors)
-        sorted_gaps = gap_indices[np.argsort(density[gap_indices])]
-        print(f"\nTop 10 knowledge gaps (lowest density concepts):")
-        for i, idx in enumerate(sorted_gaps[:10]):
-            print(f"  {i+1}. '{labels[idx]}' — density {density[idx]:.4f}")
-        print(f"\nThese are the concepts MAIL understands least well.")
-        print(f"It will target these first when running the full loop.")
+        detector = GapDetector(n_clusters=5, n_probes=20)
+        gap_vectors, gap_metadata, densities = detector.find_gaps(vectors)
+
+        print(f"\nFrontier gaps (ranked by how far from all known knowledge):")
+        for i, (meta, density) in enumerate(zip(gap_metadata, densities)):
+            # Show nearest known concepts for each frontier
+            sims = np.array([detector.cosine_sim(gap_vectors[i], v) for v in vectors])
+            top3 = np.argsort(sims)[-3:][::-1]
+            nearest = [labels[j] for j in top3]
+            print(f"\n  Gap {i+1}: Between cluster {meta['cluster_a']} and cluster {meta['cluster_b']}")
+            print(f"    Gap size:  {meta['gap_size']:.4f}")
+            print(f"    Density:   {density:.4f} (lower = more unknown)")
+            print(f"    Nearest:   {', '.join(nearest)}")
+            print(f"    → Uncharted territory between these fields")
+            if i >= 6:
+                break
+
+        print(f"\nThese are the interdisciplinary frontiers.")
+        print(f"MAIL will probe these regions — not just isolated known concepts.")
+        print(f"This is where genuinely new knowledge gets discovered.")
 
     else:
         run_mail_loop(model, n_cycles=3)
