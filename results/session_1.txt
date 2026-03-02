@@ -1,9 +1,10 @@
 Quick Note:
-Session 1 — 5 cycles, all-MiniLM-L6-v2 + Llama 3.2
+Session 1 — 3 cycles, all-MiniLM-L6-v2 + Llama 3.2
 Hardware: Google Colab free tier (T4 GPU)
-Date: 1 March 2026
-Result: All 5 MAIL stages verified on real models
+Date: 2 March 2026
+Result: All 3 MAIL stages verified on real models
 Results:
+ 
 ======================================================================
   THE INITIATIVE GAP
   curious_ai.py — Live MAIL Pipeline
@@ -18,9 +19,7 @@ Options:
 
 Choice (1/2/3/4): 1
 [EMBEDDING] Loading all-MiniLM-L6-v2...
-Loading weights: 100%
- 103/103 [00:00<00:00, 432.30it/s, Materializing param=pooler.dense.weight]
-BertModel LOAD REPORT from: sentence-transformers/all-MiniLM-L6-v2
+Loading weights: 100% 103/103 [00:00<00:00, 478.14it/s, Materializing param=pooler.dense.weight]BertModel LOAD REPORT from: sentence-transformers/all-MiniLM-L6-v2
 Key                     | Status     |  | 
 ------------------------+------------+--+-
 embeddings.position_ids | UNEXPECTED |  | 
@@ -35,7 +34,7 @@ Notes:
   Knowledge base size: 35 concepts
   LLM: llama3.2 via Ollama
 
-How many cycles? (recommended: 3-5): 5
+How many cycles? (recommended: 3-5): 3
 
 ======================================================================
   THE INITIATIVE GAP — MAIL Framework (Live)
@@ -44,216 +43,160 @@ How many cycles? (recommended: 3-5): 5
 [PHYSICS] PyBullet ready.
 
 ──────────────────────────────────────────────────────────────────────
-  CYCLE 1/5
+  CYCLE 1/3
 ──────────────────────────────────────────────────────────────────────
 
 → Stage 1: Gap Detection
 
-[GAP DETECTION]
+[GAP DETECTION — INTER-CLUSTER FRONTIER PROBING]
   Knowledge base: 35 concepts
-  Gaps found: 6 (bottom 15.0% density)
-  Target gap: 'the sum of angles in a triangle is one hundred and eighty degrees'
-  Density: 1.1263 (lowest in space)
+  Knowledge clusters found: 5
+  Interdisciplinary frontiers: 10
+  Frontier gaps identified: 10
+  Most unknown region density: 1.6306
+  (Lower density = further from all known knowledge)
+  Target: frontier between cluster 0 and cluster 4
+  Gap size: 0.8668 | Frontier density: 1.6306
+  Nearest known concepts: the nature of time is debated in physics, temperature affects the speed of chemical reactions, ice melts above zero degrees celsius
+  → This is uncharted territory between these fields
 
 → Stage 2: Hypothesis Generation
 
 [HYPOTHESIS GENERATION]
-  Hypothesis norm: 0.5239
-  cos(gap, hypothesis): 0.9378
+  Hypothesis norm: 0.3314
+  cos(gap, hypothesis): 0.9021
 
 → Stage 3: Human Oracle
 
 [ORACLE QUERY]
-  Most similar concepts: the sum of angles in a triangle is one hundred and eighty degrees, ice melts above zero degrees celsius, temperature affects the speed of chemical reactions
-  Most unlike concepts:  light travels faster than sound, colonialism had long lasting effects on colonised nations, water flows downhill
+  Most similar concepts: the nature of time is debated in physics, temperature affects the speed of chemical reactions, ice melts above zero degrees celsius
+  Most unlike concepts:  colonialism had long lasting effects on colonised nations, the heart pumps blood through the body, pressure causes liquids to flow
 
-  Question: Does your hypothesis imply that all physical systems undergo a universal acceleration or deceleration in response to changes in temperature or other external factors?
+  Question: Does the concept relate to the idea that some phenomenon can be described by a fixed, absolute value, but can also be influenced by a variable or context-dependent factor?
 
   Your answer (yes / no / idk): yes
 
   ✓ Confirmed
-  Describe what was confirmed in plain English: geometric shapes have fixed internal angle sums determined by their number of sides
+  Nearest known concepts were: the nature of time is debated in physics, temperature affects the speed of chemical reactions, ice melts above zero degrees celsius
+  Name this new concept in one short sentence (max 150 chars): physical constants have fixed absolute values but their effects depend on contextual variables and reference frames
 
 → Stage 5: Knowledge Integration
 
 [KNOWLEDGE INTEGRATION]
-  [KNOWLEDGE] Added: 'geometric shapes have fixed internal angle sums determined by their number of sides'
+  [KNOWLEDGE] Added: 'physical constants have fixed absolute values but their effects depend on contextual variables and reference frames'
   [KNOWLEDGE] Base now has 36 concepts
-  EKC penalty: 0.1292
+  EKC penalty: 0.0506
   Total integrated this session: 1
 
   Frontier ratio: 0.00
 
 ──────────────────────────────────────────────────────────────────────
-  CYCLE 2/5
+  CYCLE 2/3
 ──────────────────────────────────────────────────────────────────────
 
 → Stage 1: Gap Detection
 
-[GAP DETECTION]
+[GAP DETECTION — INTER-CLUSTER FRONTIER PROBING]
   Knowledge base: 36 concepts
-  Gaps found: 6 (bottom 15.0% density)
-  Target gap: 'moral judgements can be objective or subjective'
-  Density: 1.1688 (lowest in space)
+  Knowledge clusters found: 5
+  Interdisciplinary frontiers: 10
+  Frontier gaps identified: 10
+  Most unknown region density: 1.6726
+  (Lower density = further from all known knowledge)
+  Target: frontier between cluster 2 and cluster 4
+  Gap size: 0.7574 | Frontier density: 1.6726
+  Nearest known concepts: pressure causes liquids to flow, light travels faster than sound, objects fall due to gravity
+  → This is uncharted territory between these fields
 
 → Stage 2: Hypothesis Generation
 
 [HYPOTHESIS GENERATION]
-  Hypothesis norm: 0.5068
-  cos(gap, hypothesis): 0.9088
+  Hypothesis norm: 0.3807
+  cos(gap, hypothesis): 0.8273
 
 → Stage 3: Human Oracle
 
 [ORACLE QUERY]
-  Most similar concepts: moral judgements can be objective or subjective, free will may be compatible with determinism, the existence of God is contested
-  Most unlike concepts:  heat causes expansion in most materials, exponential growth accelerates over time, pressure causes liquids to flow
+  Most similar concepts: pressure causes liquids to flow, light travels faster than sound, objects fall due to gravity
+  Most unlike concepts:  plants convert sunlight into energy, metals conduct electricity, fire requires oxygen to burn
 
-  Question: Does the existence of moral objectivity imply a causal relationship with physical brain processes?
-
-  Your answer (yes / no / idk): idk
-
-  ? Knowledge Frontier → switching to simulation
-
-→ Stage 4: Empirical Validation
-
-[SIMULATION] Running...
-  [SIMULATION REQUIRED AT SCALE] for meaningful physical results.
-  cos(H, R) = 0.3189 | ε = 0.7
-  DENIED ✗
-
-  Frontier ratio: 0.50
-
-──────────────────────────────────────────────────────────────────────
-  CYCLE 3/5
-──────────────────────────────────────────────────────────────────────
-
-→ Stage 1: Gap Detection
-
-[GAP DETECTION]
-  Knowledge base: 36 concepts
-  Gaps found: 6 (bottom 15.0% density)
-  Target gap: 'probability quantifies uncertainty'
-  Density: 1.1842 (lowest in space)
-
-→ Stage 2: Hypothesis Generation
-
-[HYPOTHESIS GENERATION]
-  Hypothesis norm: 0.5023
-  cos(gap, hypothesis): 0.9083
-
-→ Stage 3: Human Oracle
-
-[ORACLE QUERY]
-  Most similar concepts: probability quantifies uncertainty, correlation does not imply causation, the brain processes sensory information
-  Most unlike concepts:  geometric shapes have fixed internal angle sums determined by their number of sides, colonialism had long lasting effects on colonised nations, plants convert sunlight into energy
-
-  Question: Does your hypothesis imply that the unknown concept can be quantified and understood through statistical analysis or mathematical modeling?
+  Question: Does the concept in question involve the movement or flow of something in response to an external force or influence?
 
   Your answer (yes / no / idk): yes
 
   ✓ Confirmed
-  Describe what was confirmed in plain English: uncertainty can be quantified mathematically using probability and statistics
+  Nearest known concepts were: pressure causes liquids to flow, light travels faster than sound, objects fall due to gravity
+  Name this new concept in one short sentence (max 150 chars): forces act through fields that permeate space causing matter and energy to move in predictable directions
 
 → Stage 5: Knowledge Integration
 
 [KNOWLEDGE INTEGRATION]
-  [KNOWLEDGE] Added: 'uncertainty can be quantified mathematically using probability and statistics'
+  [KNOWLEDGE] Added: 'forces act through fields that permeate space causing matter and energy to move in predictable directions'
   [KNOWLEDGE] Base now has 37 concepts
-  EKC penalty: 0.1092
+  EKC penalty: 0.0462
   Total integrated this session: 2
 
-  Frontier ratio: 0.33
+  Frontier ratio: 0.00
 
 ──────────────────────────────────────────────────────────────────────
-  CYCLE 4/5
-──────────────────────────────────────────────────────────────────────
-
-→ Stage 1: Gap Detection
-
-[GAP DETECTION]
-  Knowledge base: 37 concepts
-  Gaps found: 6 (bottom 15.0% density)
-  Target gap: 'prime numbers have no factors other than one and themselves'
-  Density: 1.1857 (lowest in space)
-
-→ Stage 2: Hypothesis Generation
-
-[HYPOTHESIS GENERATION]
-  Hypothesis norm: 0.5326
-  cos(gap, hypothesis): 0.9088
-
-→ Stage 3: Human Oracle
-
-[ORACLE QUERY]
-  Most similar concepts: prime numbers have no factors other than one and themselves, the nature of time is debated in physics, free will may be compatible with determinism
-  Most unlike concepts:  heat causes expansion in most materials, water flows downhill, plants convert sunlight into energy
-
-  Question: Is your hypothesis about a fundamental aspect of reality that applies to all domains of knowledge and experience?
-
-  Your answer (yes / no / idk): idk
-
-  ? Knowledge Frontier → switching to simulation
-
-→ Stage 4: Empirical Validation
-
-[SIMULATION] Running...
-  [SIMULATION REQUIRED AT SCALE] for meaningful physical results.
-  cos(H, R) = 0.2554 | ε = 0.7
-  DENIED ✗
-
-  Frontier ratio: 0.50
-
-──────────────────────────────────────────────────────────────────────
-  CYCLE 5/5
+  CYCLE 3/3
 ──────────────────────────────────────────────────────────────────────
 
 → Stage 1: Gap Detection
 
-[GAP DETECTION]
+[GAP DETECTION — INTER-CLUSTER FRONTIER PROBING]
   Knowledge base: 37 concepts
-  Gaps found: 6 (bottom 15.0% density)
-  Target gap: 'geometric shapes have fixed internal angle sums determined by their number of sides'
-  Density: 1.2089 (lowest in space)
+  Knowledge clusters found: 5
+  Interdisciplinary frontiers: 10
+  Frontier gaps identified: 10
+  Most unknown region density: 1.6538
+  (Lower density = further from all known knowledge)
+  Target: frontier between cluster 1 and cluster 4
+  Gap size: 0.7148 | Frontier density: 1.6538
+  Nearest known concepts: alliances between nations can cause local conflicts to become global wars, free will may be compatible with determinism, colonialism had long lasting effects on colonised nations
+  → This is uncharted territory between these fields
 
 → Stage 2: Hypothesis Generation
 
 [HYPOTHESIS GENERATION]
-  Hypothesis norm: 0.5650
-  cos(gap, hypothesis): 0.9311
+  Hypothesis norm: 0.3593
+  cos(gap, hypothesis): 0.8829
 
 → Stage 3: Human Oracle
 
 [ORACLE QUERY]
-  Most similar concepts: geometric shapes have fixed internal angle sums determined by their number of sides, the sum of angles in a triangle is one hundred and eighty degrees, moral judgements can be objective or subjective
-  Most unlike concepts:  light travels faster than sound, probability quantifies uncertainty, metals conduct electricity
+  Most similar concepts: alliances between nations can cause local conflicts to become global wars, free will may be compatible with determinism, colonialism had long lasting effects on colonised nations
+  Most unlike concepts:  heat causes expansion in most materials, metals conduct electricity, ice melts above zero degrees celsius
 
-  Question: Does a universally applicable principle governing the behavior of physical systems also apply to complex biological systems with emergent properties?
+  Question: Does the concept in question involve a relationship between the internal workings of a system and its external manifestations or behaviors?
 
   Your answer (yes / no / idk): yes
 
   ✓ Confirmed
-  Describe what was confirmed in plain English: all living organisms are composed of cells that carry out biological functions
+  Nearest known concepts were: alliances between nations can cause local conflicts to become global wars, free will may be compatible with determinism, colonialism had long lasting effects on colonised nations
+  Name this new concept in one short sentence (max 150 chars): complex systems produce emergent behaviours at the macro level that cannot be predicted from individual components alone
 
 → Stage 5: Knowledge Integration
 
 [KNOWLEDGE INTEGRATION]
-  [KNOWLEDGE] Added: 'all living organisms are composed of cells that carry out biological functions'
+  [KNOWLEDGE] Added: 'complex systems produce emergent behaviours at the macro level that cannot be predicted from individual components alone'
   [KNOWLEDGE] Base now has 38 concepts
-  EKC penalty: 0.1723
+  EKC penalty: 0.0697
   Total integrated this session: 3
 
-  Frontier ratio: 0.40
+  Frontier ratio: 0.00
 
 ======================================================================
 
 [SESSION SUMMARY]
-  Facts processed:   5
+  Facts processed:   3
   Confirmed:         3
   From human oracle: 3
-  From simulation:   2
-  Frontier events:   2
+  From simulation:   0
+  Frontier events:   0
 
   Confirmed facts this session:
-    ✓ geometric shapes have fixed internal angle sums determined by their number of sides
-    ✓ uncertainty can be quantified mathematically using probability and statistics
-    ✓ all living organisms are composed of cells that carry out biological functions
+    ✓ physical constants have fixed absolute values but their effects depend on contextual variables and reference frames
+    ✓ forces act through fields that permeate space causing matter and energy to move in predictable directions
+    ✓ complex systems produce emergent behaviours at the macro level that cannot be predicted from individual components alone
+
