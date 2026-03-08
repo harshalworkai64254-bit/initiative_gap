@@ -1,25 +1,15 @@
-Quick Note:
-Session 1 — 3 cycles, all-MiniLM-L6-v2 + Llama 3.2
-Hardware: Google Colab free tier (T4 GPU)
-Date: 2 March 2026
-Result: All 3 MAIL stages verified on real models
-Results:
- 
+
 ======================================================================
-  THE INITIATIVE GAP
-  curious_ai.py — Live MAIL Pipeline
-  Embedding: all-MiniLM-L6-v2 | LLM: Llama 3.2 via Ollama
+  THE INITIATIVE GAP — MAIL v2
+  Research Accelerator Edition
+  all-MiniLM-L6-v2 | Phi-4 14B Q4_K_M | ChromaDB
 ======================================================================
 
-Options:
-  1. Run full MAIL loop (single agent)
-  2. Run MAIL loop with Competitive Knowledge Arena
-  3. Add custom knowledge to the base
-  4. Run gap detection only — see what MAIL thinks is missing
-
-Choice (1/2/3/4): 1
+Load saved knowledge from Google Drive? (yes/no): yes
 [EMBEDDING] Loading all-MiniLM-L6-v2...
-Loading weights: 100% 103/103 [00:00<00:00, 478.14it/s, Materializing param=pooler.dense.weight]BertModel LOAD REPORT from: sentence-transformers/all-MiniLM-L6-v2
+Loading weights: 100%
+ 103/103 [00:00<00:00, 474.99it/s, Materializing param=pooler.dense.weight]
+BertModel LOAD REPORT from: sentence-transformers/all-MiniLM-L6-v2
 Key                     | Status     |  | 
 ------------------------+------------+--+-
 embeddings.position_ids | UNEXPECTED |  | 
@@ -27,176 +17,403 @@ embeddings.position_ids | UNEXPECTED |  |
 Notes:
 - UNEXPECTED	:can be ignored when loading from different task/architecture; not ok if you expect identical arch.
 [EMBEDDING] Ready.
-[OLLAMA] llama3.2 is ready.
+[KNOWLEDGE STORE] ChromaDB ready at ./mail_knowledge_db
+  Empirical facts:       46
+  Belief states:         0
+  Experimental results:  0
+Mounted at /content/drive
+[LOAD] No saved DB found on Drive. Starting fresh.
+[EMBEDDING] Loading all-MiniLM-L6-v2...
+Loading weights: 100%
+ 103/103 [00:00<00:00, 534.12it/s, Materializing param=pooler.dense.weight]
+BertModel LOAD REPORT from: sentence-transformers/all-MiniLM-L6-v2
+Key                     | Status     |  | 
+------------------------+------------+--+-
+embeddings.position_ids | UNEXPECTED |  | 
 
-[MODEL INTERFACE] Ready.
-  Embedding dim: 384
-  Knowledge base size: 35 concepts
-  LLM: llama3.2 via Ollama
+Notes:
+- UNEXPECTED	:can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+[EMBEDDING] Ready.
+[OLLAMA] phi4:14b-q4_K_M ready.
+[KNOWLEDGE STORE] ChromaDB ready at ./mail_knowledge_db
+  Empirical facts:       46
+  Belief states:         0
+  Experimental results:  0
+[PROBES] Building semantic axes...
+[PROBES] 8 axes ready.
+[QTE] Pre-embedding philosophical frameworks...
+[QTE] 18 frameworks ready.
 
-How many cycles? (recommended: 3-5): 3
+[MODEL INTERFACE] v2 Ready.
+  Empirical facts:      46
+  Belief states:        0
+  Experimental results: 0
+  LLM: phi4:14b-q4_K_M
+
+Options:
+  1. Run MAIL loop — research accelerator mode
+  2. Run MAIL loop — with Competitive Knowledge Arena
+  3. Add knowledge manually
+  4. Gap detection demo
+  5. Test philosophical reasoning
+  6. Search knowledge database
+  7. View knowledge database stats
+
+Choice (1-7): 1
+Cycles? (3-5 recommended): 5
 
 ======================================================================
-  THE INITIATIVE GAP — MAIL Framework (Live)
-  Embedding: all-MiniLM-L6-v2 | LLM: Llama 3.2
+  THE INITIATIVE GAP — MAIL v2 (Research Accelerator)
+  Embedding: all-MiniLM-L6-v2 | LLM: Phi-4 14B Q4_K_M
+  + ChromaDB | + Experimental Hypothesis Generator
+  + Researcher Interface | + QTE | + PRM
 ======================================================================
 [PHYSICS] PyBullet ready.
 
 ──────────────────────────────────────────────────────────────────────
-  CYCLE 1/3
+  CYCLE 1/5
 ──────────────────────────────────────────────────────────────────────
 
-→ Stage 1: Gap Detection
+[GAP DETECTION]  KB size: 46
+  10 frontier gaps found.
 
-[GAP DETECTION — INTER-CLUSTER FRONTIER PROBING]
-  Knowledge base: 35 concepts
-  Knowledge clusters found: 5
-  Interdisciplinary frontiers: 10
-  Frontier gaps identified: 10
-  Most unknown region density: 1.6306
-  (Lower density = further from all known knowledge)
-  Target: frontier between cluster 0 and cluster 4
-  Gap size: 0.8668 | Frontier density: 1.6306
-  Nearest known concepts: the nature of time is debated in physics, temperature affects the speed of chemical reactions, ice melts above zero degrees celsius
-  → This is uncharted territory between these fields
+  Target: gap_1_3
+  Nearest: cells are the basic unit of life, the existence of God is contested, prime numbers have no factors other than one and themselves
 
-→ Stage 2: Hypothesis Generation
+[SEMANTIC FINGERPRINT]
+  physical_metaphysical            +0.236  ████                  → the soul of a person after death
+  observable_unobservable          -0.062  █                     ← measuring temperature with a thermo
+  falsifiable_unfalsifiable        +0.136  ██                    → God exists outside the physical uni
+  objective_subjective             -0.000                        ← the boiling point of water is 100 d
+  deterministic_probabilistic      +0.092  █                     → a radioactive atom may or may not d
+  empirical_normative              +0.110  ██                    → humans ought to treat each other fa
+  simple_paradoxical               +0.034                        → this statement is false
+  consensus_contested              -0.043                        ← the earth orbits the sun
 
-[HYPOTHESIS GENERATION]
-  Hypothesis norm: 0.3314
-  cos(gap, hypothesis): 0.9021
+  Predicted mode: EMPIRICAL
 
-→ Stage 3: Human Oracle
+[HYPOTHESIS]  norm=0.3339  cos(gap,H)=0.9046
+  Hypothesis mode: EMPIRICAL
 
 [ORACLE QUERY]
-  Most similar concepts: the nature of time is debated in physics, temperature affects the speed of chemical reactions, ice melts above zero degrees celsius
-  Most unlike concepts:  colonialism had long lasting effects on colonised nations, the heart pumps blood through the body, pressure causes liquids to flow
+  Most similar: cells are the basic unit of life, the existence of God is contested, prime numbers have no factors other than one and themselves
+  Most unlike:  heat causes expansion in most materials, exponential growth accelerates over time, friction causes heat
 
-  Question: Does the concept relate to the idea that some phenomenon can be described by a fixed, absolute value, but can also be influenced by a variable or context-dependent factor?
+  Question: Does the concept of prime numbers having no factors other than one and themselves imply a fundamental indivisibility similar to the basic unit of life being the cell?
 
-  Your answer (yes / no / idk): yes
+  Answer (yes / no / idk): idk
 
-  ✓ Confirmed
-  Nearest known concepts were: the nature of time is debated in physics, temperature affects the speed of chemical reactions, ice melts above zero degrees celsius
-  Name this new concept in one short sentence (max 150 chars): physical constants have fixed absolute values but their effects depend on contextual variables and reference frames
+  ? Frontier detected → routing: EMPIRICAL
 
-→ Stage 5: Knowledge Integration
+→ Stage 4a: Empirical Validation
+[SIMULATION] Running...
+  cos(H,R)=0.1505 ε=0.7 → DENIED ✗
 
-[KNOWLEDGE INTEGRATION]
-  [KNOWLEDGE] Added: 'physical constants have fixed absolute values but their effects depend on contextual variables and reference frames'
-  [KNOWLEDGE] Base now has 36 concepts
-  EKC penalty: 0.0506
-  Total integrated this session: 1
+→ Generating Experimental Brief...
 
-  Frontier ratio: 0.00
+══════════════════════════════════════════════════════════════════════
+  EXPERIMENTAL BRIEF — MAIL Research Accelerator
+  Generated: 2026-03-08T18:49:25.552430
+══════════════════════════════════════════════════════════════════════
+
+  DOMAIN:      BIOLOGY
+  CONFIDENCE:  0.684 / 1.000
+  TIMESCALE:   weeks to months
+
+  ── HYPOTHESIS ──────────────────────────────────────────
+  Cells exhibit a pattern in their division rates that can be predicted by a mathematical model analogous to the distribution of prime numbers.
+
+  ── RATIONALE ───────────────────────────────────────────
+  The gap exists because while cells are known as the basic unit of life, their division rates have not been explored through the lens of mathematical patterns like those found in prime numbers.
+
+  ── PREDICTED OUTCOME (if true) ─────────────────────────
+  The division rates of cells will show a non-random distribution that aligns with a mathematical model similar to the distribution of prime numbers.
+
+  ── NULL OUTCOME (if false) ──────────────────────────────
+  The division rates of cells will show a random distribution with no discernible pattern aligning with any mathematical model.
+
+  ── SUGGESTED EXPERIMENTAL METHOD ───────────────────────
+  Cultivate a large population of identical cells under controlled conditions, record their division times, and analyze the data using statistical methods to identify patterns analogous to the distribution of prime numbers.
+
+  ── KEY VARIABLES ───────────────────────────────────────
+  Independent : independent variable: time intervals between cell divisions
+  Dependent   : dependent variable: frequency distribution of division intervals
+  Control     : control variable: environmental conditions such as temperature, nutrient availability, and pH
+
+  ── ALTERNATIVE METHODS ─────────────────────────────────
+  • PCR analysis
+  • genetic knockout study
+  • cell culture assay
+
+  ── EQUIPMENT ───────────────────────────────────────────
+  PCR machine, microscope, centrifuge, cell culture hood, spectrophotometer
+
+  ── PREDICTED MECHANISM ─────────────────────────────────
+  If true, the underlying mechanism may involve intrinsic cellular processes that are governed by a mathematical principle similar to the distribution of prime numbers.
+
+  ── IMPLICATIONS IF CONFIRMED ───────────────────────────
+  Confirming this hypothesis could reveal a new mathematical framework for understanding cellular processes, potentially leading to advancements in predicting cell behavior in biological systems.
+
+  ── RELATED KNOWLEDGE IN DATABASE ───────────────────────
+  • cells are the basic unit of life
+  • prime numbers have no factors other than one and themselves
+  • the existence of God is contested
+
+══════════════════════════════════════════════════════════════════════
+
+[RESEARCHER FEEDBACK]
+  Has this hypothesis been tested? (yes / no / skip)
+  Answer: skip
+  [EXPORT] Brief saved to brief_cycle_1.json
+
+  Frontier ratio: 1.00
 
 ──────────────────────────────────────────────────────────────────────
-  CYCLE 2/3
+  CYCLE 2/5
 ──────────────────────────────────────────────────────────────────────
 
-→ Stage 1: Gap Detection
+[GAP DETECTION]  KB size: 46
+  10 frontier gaps found.
 
-[GAP DETECTION — INTER-CLUSTER FRONTIER PROBING]
-  Knowledge base: 36 concepts
-  Knowledge clusters found: 5
-  Interdisciplinary frontiers: 10
-  Frontier gaps identified: 10
-  Most unknown region density: 1.6726
-  (Lower density = further from all known knowledge)
-  Target: frontier between cluster 2 and cluster 4
-  Gap size: 0.7574 | Frontier density: 1.6726
-  Nearest known concepts: pressure causes liquids to flow, light travels faster than sound, objects fall due to gravity
-  → This is uncharted territory between these fields
+  Target: gap_1_2
+  Nearest: the nature of time is debated in physics, prime numbers have no factors other than one and themselves, the existence of God is contested
 
-→ Stage 2: Hypothesis Generation
+[SEMANTIC FINGERPRINT]
+  physical_metaphysical            -0.020                        ← a rock falling to the ground
+  observable_unobservable          -0.204  ████                  ← measuring temperature with a thermo
+  falsifiable_unfalsifiable        +0.262  █████                 → God exists outside the physical uni
+  objective_subjective             -0.135  ██                    ← the boiling point of water is 100 d
+  deterministic_probabilistic      +0.045                        → a radioactive atom may or may not d
+  empirical_normative              +0.117  ██                    → humans ought to treat each other fa
+  simple_paradoxical               +0.082  █                     → this statement is false
+  consensus_contested              -0.014                        ← the earth orbits the sun
 
-[HYPOTHESIS GENERATION]
-  Hypothesis norm: 0.3807
-  cos(gap, hypothesis): 0.8273
+  Predicted mode: EMPIRICAL
 
-→ Stage 3: Human Oracle
+[HYPOTHESIS]  norm=0.3194  cos(gap,H)=0.9094
+  Hypothesis mode: EMPIRICAL
 
 [ORACLE QUERY]
-  Most similar concepts: pressure causes liquids to flow, light travels faster than sound, objects fall due to gravity
-  Most unlike concepts:  plants convert sunlight into energy, metals conduct electricity, fire requires oxygen to burn
+  Most similar: the nature of time is debated in physics, prime numbers have no factors other than one and themselves, the existence of God is contested
+  Most unlike:  the brain forms memories through synaptic strengthening, sleep is essential for memory consolidation, reward circuits in the brain reinforce repeated behaviours
 
-  Question: Does the concept in question involve the movement or flow of something in response to an external force or influence?
+  Question: Is the concept primarily concerned with the philosophical or theoretical implications of a singular event or idea?
 
-  Your answer (yes / no / idk): yes
+  Answer (yes / no / idk): yes
 
-  ✓ Confirmed
-  Nearest known concepts were: pressure causes liquids to flow, light travels faster than sound, objects fall due to gravity
-  Name this new concept in one short sentence (max 150 chars): forces act through fields that permeate space causing matter and energy to move in predictable directions
+  ✓ Confirmed by oracle
+  Name this concept (max 150 chars): the intersection of mathematical abstraction and philosophical inquiry about fundamental reality
 
-→ Stage 5: Knowledge Integration
+→ Stage 5: Integration
 
-[KNOWLEDGE INTEGRATION]
-  [KNOWLEDGE] Added: 'forces act through fields that permeate space causing matter and energy to move in predictable directions'
-  [KNOWLEDGE] Base now has 37 concepts
-  EKC penalty: 0.0462
-  Total integrated this session: 2
+[INTEGRATION]
+  [KNOWLEDGE] Added: 'the intersection of mathematical abstraction and philosophic'
+  [KNOWLEDGE] DB: 47 empirical, 0 experimental
+  EKC penalty: 0.0638 | Total integrated: 1
 
-  Frontier ratio: 0.00
+  Frontier ratio: 0.50
 
 ──────────────────────────────────────────────────────────────────────
-  CYCLE 3/3
+  CYCLE 3/5
 ──────────────────────────────────────────────────────────────────────
 
-→ Stage 1: Gap Detection
+[GAP DETECTION]  KB size: 47
+  10 frontier gaps found.
 
-[GAP DETECTION — INTER-CLUSTER FRONTIER PROBING]
-  Knowledge base: 37 concepts
-  Knowledge clusters found: 5
-  Interdisciplinary frontiers: 10
-  Frontier gaps identified: 10
-  Most unknown region density: 1.6538
-  (Lower density = further from all known knowledge)
-  Target: frontier between cluster 1 and cluster 4
-  Gap size: 0.7148 | Frontier density: 1.6538
-  Nearest known concepts: alliances between nations can cause local conflicts to become global wars, free will may be compatible with determinism, colonialism had long lasting effects on colonised nations
-  → This is uncharted territory between these fields
+  Target: gap_0_4
+  Nearest: consciousness arises from physical brain processes, pressure causes liquids to flow, the brain processes sensory information
 
-→ Stage 2: Hypothesis Generation
+[SEMANTIC FINGERPRINT]
+  physical_metaphysical            -0.089  █                     ← a rock falling to the ground
+  observable_unobservable          +0.244  ████                  → the feeling of consciousness from i
+  falsifiable_unfalsifiable        +0.027                        → God exists outside the physical uni
+  objective_subjective             +0.083  █                     → this painting is beautiful
+  deterministic_probabilistic      -0.182  ███                   ← a ball rolling off a table will fal
+  empirical_normative              -0.082  █                     ← humans evolved from earlier primate
+  simple_paradoxical               +0.041                        → this statement is false
+  consensus_contested              +0.162  ███                   → whether free will exists is unresol
 
-[HYPOTHESIS GENERATION]
-  Hypothesis norm: 0.3593
-  cos(gap, hypothesis): 0.8829
+  Predicted mode: EMPIRICAL
 
-→ Stage 3: Human Oracle
+[HYPOTHESIS]  norm=0.3756  cos(gap,H)=0.8591
+  Hypothesis mode: EMPIRICAL
 
 [ORACLE QUERY]
-  Most similar concepts: alliances between nations can cause local conflicts to become global wars, free will may be compatible with determinism, colonialism had long lasting effects on colonised nations
-  Most unlike concepts:  heat causes expansion in most materials, metals conduct electricity, ice melts above zero degrees celsius
+  Most similar: consciousness arises from physical brain processes, pressure causes liquids to flow, the brain processes sensory information
+  Most unlike:  acids and bases neutralise each other, temperature affects the speed of chemical reactions, metals conduct electricity
 
-  Question: Does the concept in question involve a relationship between the internal workings of a system and its external manifestations or behaviors?
+  Question: Does the concept involve a process where changes in physical states or conditions directly lead to observable phenomena?
 
-  Your answer (yes / no / idk): yes
+  Answer (yes / no / idk): idk
 
-  ✓ Confirmed
-  Nearest known concepts were: alliances between nations can cause local conflicts to become global wars, free will may be compatible with determinism, colonialism had long lasting effects on colonised nations
-  Name this new concept in one short sentence (max 150 chars): complex systems produce emergent behaviours at the macro level that cannot be predicted from individual components alone
+  ? Frontier detected → routing: EMPIRICAL
 
-→ Stage 5: Knowledge Integration
+→ Stage 4a: Empirical Validation
+[SIMULATION] Running...
+  cos(H,R)=0.2548 ε=0.7 → DENIED ✗
 
-[KNOWLEDGE INTEGRATION]
-  [KNOWLEDGE] Added: 'complex systems produce emergent behaviours at the macro level that cannot be predicted from individual components alone'
-  [KNOWLEDGE] Base now has 38 concepts
-  EKC penalty: 0.0697
-  Total integrated this session: 3
+→ Generating Experimental Brief...
 
-  Frontier ratio: 0.00
+══════════════════════════════════════════════════════════════════════
+  EXPERIMENTAL BRIEF — MAIL Research Accelerator
+  Generated: 2026-03-08T18:52:46.921690
+══════════════════════════════════════════════════════════════════════
+
+  DOMAIN:      NEUROSCIENCE
+  CONFIDENCE:  0.667 / 1.000
+  TIMESCALE:   months
+
+  ── HYPOTHESIS ──────────────────────────────────────────
+  Altering intracranial pressure affects the processing speed of sensory information in the brain.
+
+  ── RATIONALE ───────────────────────────────────────────
+  The brain processes sensory information, and pressure influences fluid dynamics, suggesting a potential link between intracranial pressure and sensory processing.
+
+  ── PREDICTED OUTCOME (if true) ─────────────────────────
+  Increased intracranial pressure will slow the reaction time to sensory stimuli, measured in milliseconds.
+
+  ── NULL OUTCOME (if false) ──────────────────────────────
+  No significant change in reaction time to sensory stimuli when intracranial pressure is altered.
+
+  ── SUGGESTED EXPERIMENTAL METHOD ───────────────────────
+  Use transcranial Doppler ultrasonography to non-invasively alter and measure intracranial pressure in human subjects while recording reaction times to visual and auditory stimuli using EEG and behavioral response tasks.
+
+  ── KEY VARIABLES ───────────────────────────────────────
+  Independent : independent variable: intracranial pressure
+  Dependent   : dependent variable: reaction time to sensory stimuli
+  Control     : control variable: baseline cognitive function and sensory acuity
+
+  ── ALTERNATIVE METHODS ─────────────────────────────────
+  • EEG measurement
+  • fMRI brain imaging study
+  • optogenetics study
+
+  ── EQUIPMENT ───────────────────────────────────────────
+  fMRI scanner, EEG headset, eye tracker, reaction time apparatus, electrode array
+
+  ── PREDICTED MECHANISM ─────────────────────────────────
+  Increased intracranial pressure may compress neural pathways, slowing the transmission of sensory information.
+
+  ── IMPLICATIONS IF CONFIRMED ───────────────────────────
+  Confirming this would suggest a direct link between physical brain states and cognitive processing, potentially informing treatments for conditions involving altered intracranial pressure.
+
+  ── RELATED KNOWLEDGE IN DATABASE ───────────────────────
+  • consciousness arises from physical brain processes
+  • the brain processes sensory information
+  • pressure causes liquids to flow
+
+══════════════════════════════════════════════════════════════════════
+
+[RESEARCHER FEEDBACK]
+  Has this hypothesis been tested? (yes / no / skip)
+  Answer: skip
+  [EXPORT] Brief saved to brief_cycle_3.json
+
+  Frontier ratio: 0.67
+
+──────────────────────────────────────────────────────────────────────
+  CYCLE 4/5
+──────────────────────────────────────────────────────────────────────
+
+[GAP DETECTION]  KB size: 47
+  10 frontier gaps found.
+
+  Target: gap_1_2
+  Nearest: mutations in DNA can be passed to offspring, proteins are built from amino acid sequences, DNA carries genetic information
+
+[SEMANTIC FINGERPRINT]
+  physical_metaphysical            +0.007                        → the soul of a person after death
+  observable_unobservable          -0.190  ███                   ← measuring temperature with a thermo
+  falsifiable_unfalsifiable        -0.054  █                     ← evolution can be tested with fossil
+  objective_subjective             -0.166  ███                   ← the boiling point of water is 100 d
+  deterministic_probabilistic      +0.172  ███                   → a radioactive atom may or may not d
+  empirical_normative              -0.143  ██                    ← humans evolved from earlier primate
+  simple_paradoxical               +0.095  █                     → this statement is false
+  consensus_contested              -0.138  ██                    ← the earth orbits the sun
+
+  Predicted mode: EMPIRICAL
+
+[HYPOTHESIS]  norm=0.3806  cos(gap,H)=0.8558
+  Hypothesis mode: EMPIRICAL
+
+[ORACLE QUERY]
+  Most similar: mutations in DNA can be passed to offspring, proteins are built from amino acid sequences, DNA carries genetic information
+  Most unlike:  moral judgements can be objective or subjective, probability quantifies uncertainty, sleep is essential for memory consolidation
+
+  Question: Can mutations in DNA alter the sequence of amino acids in proteins, thereby affecting their function?
+
+  Answer (yes / no / idk): yes
+
+  ✓ Confirmed by oracle
+  Name this concept (max 150 chars): DNA mutations alter amino acid sequences and can change protein function
+
+→ Stage 5: Integration
+
+[INTEGRATION]
+  [KNOWLEDGE] Added: 'DNA mutations alter amino acid sequences and can change prot'
+  [KNOWLEDGE] DB: 48 empirical, 0 experimental
+  EKC penalty: 0.0560 | Total integrated: 2
+
+  Frontier ratio: 0.50
+
+──────────────────────────────────────────────────────────────────────
+  CYCLE 5/5
+──────────────────────────────────────────────────────────────────────
+
+[GAP DETECTION]  KB size: 48
+  10 frontier gaps found.
+
+  Target: gap_1_2
+  Nearest: friction causes heat, pressure causes liquids to flow, force causes acceleration
+
+[SEMANTIC FINGERPRINT]
+  physical_metaphysical            -0.219  ████                  ← a rock falling to the ground
+  observable_unobservable          -0.179  ███                   ← measuring temperature with a thermo
+  falsifiable_unfalsifiable        +0.204  ████                  → God exists outside the physical uni
+  objective_subjective             -0.140  ██                    ← the boiling point of water is 100 d
+  deterministic_probabilistic      -0.052  █                     ← a ball rolling off a table will fal
+  empirical_normative              +0.022                        → humans ought to treat each other fa
+  simple_paradoxical               +0.060  █                     → this statement is false
+  consensus_contested              +0.045                        → whether free will exists is unresol
+
+  Predicted mode: EMPIRICAL
+
+[HYPOTHESIS]  norm=0.3608  cos(gap,H)=0.8717
+  Hypothesis mode: EMPIRICAL
+
+[ORACLE QUERY]
+  Most similar: friction causes heat, pressure causes liquids to flow, force causes acceleration
+  Most unlike:  sleep is essential for memory consolidation, proteins are built from amino acid sequences, cells are the basic unit of life
+
+  Question: Does the concept involve a direct cause-and-effect relationship between two physical phenomena?
+
+  Answer (yes / no / idk): yes
+
+  ✓ Confirmed by oracle
+  Name this concept (max 150 chars): physical forces interact to produce measurable causal effects on matter
+
+→ Stage 5: Integration
+
+[INTEGRATION]
+  [KNOWLEDGE] Added: 'physical forces interact to produce measurable causal effect'
+  [KNOWLEDGE] DB: 49 empirical, 0 experimental
+  EKC penalty: 0.0704 | Total integrated: 3
+
+  Frontier ratio: 0.40
 
 ======================================================================
 
 [SESSION SUMMARY]
-  Facts processed:   3
-  Confirmed:         3
-  From human oracle: 3
-  From simulation:   0
-  Frontier events:   0
+  Facts processed:          5
+  Confirmed:                3
+  Philosophical:            0
+  Experimental briefs:      2
+  Discrepancy frontiers:    0
 
-  Confirmed facts this session:
-    ✓ physical constants have fixed absolute values but their effects depend on contextual variables and reference frames
-    ✓ forces act through fields that permeate space causing matter and energy to move in predictable directions
-    ✓ complex systems produce emergent behaviours at the macro level that cannot be predicted from individual components alone
+  Experimental hypotheses generated:
+    [BIOLOGY] Cells exhibit a pattern in their division rates that can be 
+    [NEUROSCIENCE] Altering intracranial pressure affects the processing speed 
 
+Save knowledge to Google Drive? (yes/no): yes
+Drive already mounted at /content/drive; to attempt to forcibly remount, call drive.mount("/content/drive", force_remount=True).
+[SAVE] Knowledge saved to Google Drive: /content/drive/MyDrive/mail_db
